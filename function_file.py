@@ -26,14 +26,17 @@ class SatelliteData:
                 noise_val += 0.2 * self.noise2([i / self.pixels, j / self.pixels])
                 sentinel[i, j] = noise_val
 
-        def river_poly(x):
+        def river_poly(x, river_seed):
             """The river creating polynomial - Sinusoidal"""
-            return int(self.pixels // 2 + (self.pixels / 15) * (1 + np.sin(2 * np.pi * x / self.pixels)))
+            random.seed(river_seed)
+            return int(self.pixels // 2 + (self.pixels / 15) * (1 + np.sin(2 * np.pi * x / self.pixels) + random.uniform(-0.1, 0.1)))
+
+        river_seed = self.seed + 1  # Use a different seed for the river path
 
         # Apply the river path
             
         for i in range(self.pixels):
-            y = river_poly(i)
+            y = river_poly(i,river_seed)
             sentinel[i, max(0, y-self.river_width):min(self.pixels, y+self.river_width)] = -0.8  # Making the river a bit wider and setting to -0.8 to distinguish
 
         # Normalize the noise values to range between 0 and 1
