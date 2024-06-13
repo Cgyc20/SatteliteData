@@ -27,14 +27,16 @@ class SatelliteData:
                 sentinel[i, j] = noise_val
 
         def river_poly(x, river_seed):
-            """The river creating polynomial - Sinusoidal"""
+            """The river creating polynomial - Sinusoidal with random amplitude and phase shift"""
             random.seed(river_seed)
-            return int(self.pixels // 2 + (self.pixels / 15) * (1 + np.sin(2 * np.pi * x / self.pixels) + random.uniform(-0.1, 0.1)))
+            amplitude_factor = random.uniform(0.5, 1.5)  # Random factor for amplitude variation
+            phase_shift = random.uniform(-0.5, 0.5)  # Random phase shift
+            frequency_factor = random.uniform(0.8, 1.2)  # Optional: Random factor for frequency variation
 
-        river_seed = self.seed + 1  # Use a different seed for the river path
+            return int(self.pixels // 2 + (self.pixels / 15) * amplitude_factor * (1 + np.sin(2 * np.pi * frequency_factor * (x + phase_shift) / self.pixels) + random.uniform(-1, 1)))
 
         # Apply the river path
-            
+        river_seed = self.seed + 1
         for i in range(self.pixels):
             y = river_poly(i,river_seed)
             sentinel[i, max(0, y-self.river_width):min(self.pixels, y+self.river_width)] = -0.8  # Making the river a bit wider and setting to -0.8 to distinguish
